@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Himalaya FM</string>
+
+    <string-array name="main_content">
+        <item>推荐</item>
+        <item>订阅</item>
+        <item>历史</item>
+    </string-array>
+</resources>
