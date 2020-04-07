@@ -1,11 +1,16 @@
 package com.chenjiahua.himalayafm.iu.fragment;
 
-import android.util.Log;
+import android.nfc.Tag;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chenjiahua.himalayafm.R;
+import com.chenjiahua.himalayafm.adapters.RecommendListAdapter;
 import com.chenjiahua.himalayafm.base.BaseFragment;
 import com.chenjiahua.himalayafm.utils.Constants;
 import com.chenjiahua.himalayafm.utils.LogUtils;
@@ -18,21 +23,36 @@ import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 public class RecommendFragment extends BaseFragment {
     private static final String TAG = "RecommendFragment";
+    private View mRootView;
+    private RecyclerView recommendRv;
+    private RecommendListAdapter mRecommendListAdapter;
 
     @Override
     protected View onSubViewLoaded(LayoutInflater inflater, ViewGroup container) {
 
 //        加载完成
-        View inflate = inflater.inflate(R.layout.fragment_recommend, container, false);
-//        去获取数据
+        mRootView = inflater.inflate(R.layout.fragment_recommend, container, false);
+        //recyclerView 的使用
+        // 1. 找到对应的控件
+        recommendRv = mRootView.findViewById(R.id.recommend_content_list);
+        // 2. 设置布局管理器
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        recommendRv.setLayoutManager(linearLayoutManager);
+        //创建适配器
+        mRecommendListAdapter = new RecommendListAdapter();
+        //设置适配器
+        recommendRv.setAdapter(mRecommendListAdapter);
+//       去获取数据
+
         getRecommendData();
 
 //        返回View 给界面显示
-
-        return inflate;
+        return mRootView;
     }
 
     /**
@@ -44,15 +64,12 @@ public class RecommendFragment extends BaseFragment {
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
+                LogUtils.d(TAG,"thread name --  > " + Thread.currentThread());
                 if (gussLikeAlbumList != null) {
                     List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                    if (albumList != null) {
-                        for (Album album : albumList) {
-                            LogUtils.d(TAG,"album title ---->" + album.getAlbumTitle());
-                            LogUtils.d(TAG,"album intro ---->" + album.getAlbumIntro());
-                            LogUtils.d(TAG,"album  --- > " + album.getCoverUrlSmall());
-                        }
-                    }
+                  LogUtils.d(TAG,"album list size --- > " + albumList.size());
+//          TODO：数据回来，更新UI
+                    updateRecommendUi(albumList);
                 }
             }
 
@@ -61,5 +78,14 @@ public class RecommendFragment extends BaseFragment {
                 LogUtils.d(TAG,"ERROR CODE --- >" + i + "  ERROR INFO : " + s);
             }
         });
+    }
+
+    /**
+     * 将数据更新到UI上
+     * @param albumList
+     */
+    private void updateRecommendUi(List<Album> albumList) {
+            //把数据设置给适配器，并且更新UI
+        mRecommendListAdapter.setData(albumList);
     }
 }
