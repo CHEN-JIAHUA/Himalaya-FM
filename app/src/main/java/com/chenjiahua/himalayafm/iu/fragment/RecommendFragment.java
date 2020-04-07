@@ -91,14 +91,20 @@ public class RecommendFragment extends BaseFragment implements IRecommendCallBac
     }
 
     @Override
-    public void onLoaderMore(List<Album> result) {
+    public void onNetworkError() {
 
     }
 
     @Override
-    public void onRefreshMore(List<Album> result) {
+    public void onEmpty() {
 
     }
+
+    @Override
+    public void onLoading() {
+
+    }
+
 
     @Override
     public void onDestroyView() {

@@ -4,6 +4,9 @@ import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.List;
 
+/**
+ * 将presenter 获取的数据通知到UI层，进行UI更新
+ */
 public interface IRecommendCallBack {
 
     /**
@@ -12,13 +15,19 @@ public interface IRecommendCallBack {
      */
     void onRecommendListLoaded(List<Album> result);
 
-    /**
-     * 加载更多数据的结果
-     */
-    void onLoaderMore(List<Album> result);
 
     /**
-     * 下拉刷新数据的结果
+     * 网络错误
      */
-    void onRefreshMore(List<Album> result);
+    void onNetworkError();
+
+    /**
+     * 数据为空
+     */
+    void onEmpty();
+
+    /**
+     * 加载中
+     */
+    void onLoading();
 }

@@ -32,7 +32,6 @@ public class RecommendPresenter implements IRecommendPresenter {
         if (sInstance == null) {
             synchronized (RecommendPresenter.class){
                 if(sInstance == null){
-
                     sInstance = new RecommendPresenter();
                 }
             }
@@ -45,6 +44,7 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     @Override
     public void getRecommendList() {
+        updateLoading();
         Map<String, String> map = new HashMap<>();
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
@@ -62,19 +62,40 @@ public class RecommendPresenter implements IRecommendPresenter {
             @Override
             public void onError(int i, String s) {
                 LogUtils.d(TAG,"ERROR CODE --- >" + i + "  ERROR INFO : " + s);
+                handleError();
             }
         });
     }
 
-    private void handleRecommendResult(List<Album> albumList) {
-        //通知UI更新
+    private void handleError() {
         if (mCallBacks != null) {
             for (IRecommendCallBack callBack : mCallBacks) {
-                callBack.onRecommendListLoaded(albumList);
+                callBack.onNetworkError();
             }
         }
     }
 
+    private void handleRecommendResult(List<Album> albumList) {
+
+        if (albumList != null) {
+            if (albumList.size() == 0) {
+                for (IRecommendCallBack callBack : mCallBacks) {
+                    callBack.onEmpty();
+                }
+            }else {
+                for (IRecommendCallBack callBack : mCallBacks) {
+                    callBack.onRecommendListLoaded(albumList);
+                }
+            }
+        }
+    }
+
+    private void updateLoading(){
+        for (IRecommendCallBack callBack : mCallBacks) {
+            callBack.onLoading();
+        }
+
+    }
 
     @Override
     public void pull2RefreshMode() {
