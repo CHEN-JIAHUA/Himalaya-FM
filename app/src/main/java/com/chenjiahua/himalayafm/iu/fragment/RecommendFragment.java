@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chenjiahua.himalayafm.R;
 import com.chenjiahua.himalayafm.adapters.RecommendListAdapter;
 import com.chenjiahua.himalayafm.base.BaseFragment;
+import com.chenjiahua.himalayafm.interfaces.IRecommendCallBack;
+import com.chenjiahua.himalayafm.presenters.RecommendPresenter;
 import com.chenjiahua.himalayafm.utils.Constants;
 import com.chenjiahua.himalayafm.utils.LogUtils;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
@@ -29,11 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
-public class RecommendFragment extends BaseFragment {
+public class RecommendFragment extends BaseFragment implements IRecommendCallBack {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView recommendRv;
     private RecommendListAdapter mRecommendListAdapter;
+    private RecommendPresenter recommendPresenter;
 
     @Override
     protected View onSubViewLoaded(LayoutInflater inflater, ViewGroup container) {
@@ -61,38 +64,16 @@ public class RecommendFragment extends BaseFragment {
         mRecommendListAdapter = new RecommendListAdapter();
         //设置适配器
         recommendRv.setAdapter(mRecommendListAdapter);
-//       去获取数据
-
-        getRecommendData();
-
+//       获取到逻辑层的对象
+        recommendPresenter = RecommendPresenter.getInstance();
+        recommendPresenter.registerViewCallBack(this);
+        //获取推荐列表
+        recommendPresenter.getRecommendList();
 //        返回View 给界面显示
         return mRootView;
     }
 
-    /**
-     * 获取推荐内容 ：其实就是猜你喜欢这个接口
-     */
-    private void getRecommendData() {
-        Map<String, String> map = new HashMap<>();
-        map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMAND_COUNT + "");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
-            @Override
-            public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
-                LogUtils.d(TAG,"thread name --  > " + Thread.currentThread());
-                if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                  LogUtils.d(TAG,"album list size --- > " + albumList.size());
-//          TODO：数据回来，更新UI
-                    updateRecommendUi(albumList);
-                }
-            }
 
-            @Override
-            public void onError(int i, String s) {
-                LogUtils.d(TAG,"ERROR CODE --- >" + i + "  ERROR INFO : " + s);
-            }
-        });
-    }
 
     /**
      * 将数据更新到UI上
@@ -101,5 +82,31 @@ public class RecommendFragment extends BaseFragment {
     private void updateRecommendUi(List<Album> albumList) {
             //把数据设置给适配器，并且更新UI
         mRecommendListAdapter.setData(albumList);
+    }
+
+    @Override
+    public void onRecommendListLoaded(List<Album> result) {
+        //把获取到的数据更新给Adapter
+        mRecommendListAdapter.setData(result);
+    }
+
+    @Override
+    public void onLoaderMore(List<Album> result) {
+
+    }
+
+    @Override
+    public void onRefreshMore(List<Album> result) {
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //todo:取消接口的注册，避免内存泄漏
+        if (recommendPresenter != null) {
+            recommendPresenter.unRegisterViewCallBack(this);
+        }
+
     }
 }
