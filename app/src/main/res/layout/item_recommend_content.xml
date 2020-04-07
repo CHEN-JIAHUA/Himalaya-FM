@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:orientation="horizontal"
+    android:background="@drawable/shape_album_item_bg"
     android:layout_marginTop="3dp">
 
-    <ImageView
+    <com.chenjiahua.himalayafm.view.RoundRectImageView
         android:id="@+id/recommend_url_icon_large"
         android:layout_width="68dp"
         android:layout_height="65dp"
