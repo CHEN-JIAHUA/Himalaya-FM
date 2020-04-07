@@ -57,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
         mCommonNavigator = new CommonNavigator(this);
 //        创建Indicator的适配器
         mIndicatorAdapter = new IndicatorAdapter(this);
+        mCommonNavigator.setAdjustMode(true);
         mCommonNavigator.setAdapter(mIndicatorAdapter);
+
 //      设置title 数据
         mIndicatorAdapter.setTitleData();
 //      ViewPager

@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+<LinearLayout
+    android:background="@color/himalaya_color"
+    android:id="@+id/LinearLayout_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <net.lucode.hackware.magicindicator.MagicIndicator
         android:id="@+id/main_indicator"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="5"
         android:layout_height="40dp" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center">
+        <ImageView
+            android:id="@+id/search_button"
+            android:layout_width="35dp"
+            android:layout_height="33dp"
+            android:layout_centerInParent="true"
+            android:src="@android:drawable/ic_menu_search"/>
+    </RelativeLayout>
+
+
+</LinearLayout>
+
+
     <androidx.viewpager.widget.ViewPager
-        android:layout_below="@id/main_indicator"
         android:id="@+id/view_page"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/LinearLayout_header"
+        android:layout_marginTop="-3dp" />
 
 
 </RelativeLayout>
