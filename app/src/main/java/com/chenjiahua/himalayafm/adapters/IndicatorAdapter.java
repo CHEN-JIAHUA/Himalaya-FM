@@ -9,12 +9,12 @@ import com.chenjiahua.himalayafm.R;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerIndicator;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.IPagerTitleView;
-import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ClipPagerTitleView;
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView;
 
 public class IndicatorAdapter extends CommonNavigatorAdapter {
 
     private String[] mTitles = null;
+    private OnIndicatorClickListener mOnTabListener;
 
     public IndicatorAdapter(Context context) {
         mTitles = context.getResources().getStringArray(R.array.main_content);
@@ -51,7 +51,10 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
             @Override
             public void onClick(View v) {
 //                mViewPager.setCurrentItem(index);
-//                TODO: 修改页面
+                if (mOnTabListener != null) {
+                    mOnTabListener.onTabClick(index);
+                }
+
             }
         });
         return colorTransitionPagerTitleView;
@@ -65,5 +68,13 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
 
     public void setTitleData() {
 
+    }
+
+    public void setOnIndicatorClickListener(OnIndicatorClickListener listener){
+        this.mOnTabListener = listener;
+    }
+
+    public interface OnIndicatorClickListener{
+        void onTabClick(int index);
     }
 }

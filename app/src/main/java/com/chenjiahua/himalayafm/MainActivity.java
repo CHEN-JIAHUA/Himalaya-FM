@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private CommonNavigator mCommonNavigator;
     private MagicIndicator magicIndicator;
     private ViewPager contentViewPager;
+    private IndicatorAdapter mIndicatorAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,6 +33,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initView();
+        initEvent();
+    }
+
+    private void initEvent() {
+        mIndicatorAdapter.setOnIndicatorClickListener(new IndicatorAdapter.OnIndicatorClickListener() {
+            @Override
+            public void onTabClick(int index) {
+                Log.d(TAG,"click index is --- > " + index);
+                if (contentViewPager != null) {
+
+                    contentViewPager.setCurrentItem(index);
+                }
+            }
+        });
+
     }
 
     private void initView() {
@@ -40,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //通用的指示器
         mCommonNavigator = new CommonNavigator(this);
 //        创建Indicator的适配器
-        IndicatorAdapter mIndicatorAdapter = new IndicatorAdapter(this);
+        mIndicatorAdapter = new IndicatorAdapter(this);
         mCommonNavigator.setAdapter(mIndicatorAdapter);
 //      设置title 数据
         mIndicatorAdapter.setTitleData();
