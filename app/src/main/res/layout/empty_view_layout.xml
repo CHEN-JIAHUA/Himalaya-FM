@@ -3,12 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/content_empty_image"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@mipmap/content_empty"
+        android:layout_centerInParent="true"/>
+
     <TextView
         android:id="@+id/empty_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textSize="24sp"
-        android:text="数据为空"/>
+        android:textSize="12sp"
+        android:text="呜呜~ 没有内容哦！"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/content_empty_image"/>
 
 </RelativeLayout>

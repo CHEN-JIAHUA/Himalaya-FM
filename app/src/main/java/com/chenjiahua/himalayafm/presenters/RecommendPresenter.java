@@ -20,6 +20,8 @@ public class RecommendPresenter implements IRecommendPresenter {
     private static final String TAG = "RecommendPresenter";
 
     private List<IRecommendCallBack> mCallBacks = new ArrayList<>();
+    private List<Album> mCurrentRecommend = null;
+    private List<Album> albumList = null;
 
     private RecommendPresenter() {
     }
@@ -44,6 +46,11 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     @Override
     public void getRecommendList() {
+        if (albumList != null && albumList.size() > 0) {
+            LogUtils.d(TAG,"getRecommendList -- > from list");
+            handleRecommendResult(albumList);
+            return;
+        }
         updateLoading();
         Map<String, String> map = new HashMap<>();
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
@@ -52,9 +59,10 @@ public class RecommendPresenter implements IRecommendPresenter {
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 LogUtils.d(TAG,"thread name --  > " + Thread.currentThread());
                 if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
+                    albumList = gussLikeAlbumList.getAlbumList();
                     LogUtils.d(TAG,"album list size --- > " + albumList.size());
 //          TODO：数据回来，更新UI
+                    LogUtils.d(TAG,"albumList  --- >" + albumList);
                     handleRecommendResult(albumList);
                 }
             }
@@ -75,9 +83,13 @@ public class RecommendPresenter implements IRecommendPresenter {
         }
     }
 
+    /**
+     * 返回数据的结果
+     * @param albumList
+     */
     private void handleRecommendResult(List<Album> albumList) {
-
-        if (albumList != null) {
+        //判断presenter的数据
+        if (albumList != null) {   //如果不为空，则成功
             if (albumList.size() == 0) {
                 for (IRecommendCallBack callBack : mCallBacks) {
                     callBack.onEmpty();
@@ -85,8 +97,12 @@ public class RecommendPresenter implements IRecommendPresenter {
             }else {
                 for (IRecommendCallBack callBack : mCallBacks) {
                     callBack.onRecommendListLoaded(albumList);
+                    LogUtils.d(TAG,"onRecommendListLoaded " + albumList.size());
                 }
+                this.mCurrentRecommend = albumList;
             }
+        }else {
+            LogUtils.d(TAG,"albumList  == null ");
         }
     }
 
@@ -97,20 +113,11 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     }
 
-    @Override
-    public void pull2RefreshMode() {
-
-    }
-
-    @Override
-    public void loadMore() {
-
-    }
 
     @Override
     public void registerViewCallBack(IRecommendCallBack callBack) {
         //如果没有包含的话就添加
-        if (!mCallBacks.contains(callBack)) {
+        if (mCallBacks != null && !mCallBacks.contains(callBack)) {
             mCallBacks.add(callBack);
         }
     }

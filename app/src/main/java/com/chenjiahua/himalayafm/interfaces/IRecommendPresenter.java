@@ -8,15 +8,6 @@ public interface IRecommendPresenter {
     void getRecommendList();
 
     /**
-     * 下拉加载更多
-     */
-    void pull2RefreshMode();
-    /**
-     * 加载更多
-     */
-    void loadMore();
-
-    /**
      * 用于注册UI的回调
      * @param callBack
      */
