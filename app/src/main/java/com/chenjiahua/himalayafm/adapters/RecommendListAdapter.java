@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chenjiahua.himalayafm.R;
+import com.chenjiahua.himalayafm.utils.LogUtils;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdapter.InnerHolder> {
 
+    private static final String TAG = "RecommendListAdapter";
     private List<Album> mData = new ArrayList<>();
     private View mItemView;
     private ImageView albumCoverIv;
@@ -25,6 +27,7 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     private TextView albumIntroTv;
     private TextView albumPlayCount;
     private TextView albumTrackCount;
+    private OnItemClickListener mItemListener = null;
 
 
     @NonNull
@@ -35,9 +38,18 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecommendListAdapter.InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecommendListAdapter.InnerHolder holder, int position) {
         //设置数据
         holder.itemView.setTag(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemListener != null) {
+                    mItemListener.onItemClick((Integer) v.getTag());
+                }
+                LogUtils.d(TAG,"click item position --- > " + v.getTag());
+            }
+        });
         holder.setData(mData.get(position));
     }
 
@@ -81,5 +93,13 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             Picasso.get().load(album.getCoverUrlLarge())
                     .into(albumCoverIv);
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.mItemListener = listener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
     }
 }

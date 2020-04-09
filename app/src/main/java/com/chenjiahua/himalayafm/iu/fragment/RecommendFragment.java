@@ -1,5 +1,6 @@
 package com.chenjiahua.himalayafm.iu.fragment;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.nfc.Tag;
 import android.util.Log;
@@ -13,6 +14,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chenjiahua.himalayafm.DetailActivity;
 import com.chenjiahua.himalayafm.R;
 import com.chenjiahua.himalayafm.adapters.RecommendListAdapter;
 import com.chenjiahua.himalayafm.base.BaseFragment;
@@ -27,7 +29,7 @@ import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
 import java.util.List;
 
-public class RecommendFragment extends BaseFragment implements IRecommendCallBack, UILoader.OnRetryClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendCallBack, UILoader.OnRetryClickListener, RecommendListAdapter.OnItemClickListener {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView recommendRv;
@@ -90,6 +92,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendCallBac
         LogUtils.d(TAG,"创建适配器");
         //设置适配器
         recommendRv.setAdapter(mRecommendListAdapter);
+        mRecommendListAdapter.setOnItemClickListener(this);
         return mRootView;
     }
 
@@ -143,5 +146,12 @@ public class RecommendFragment extends BaseFragment implements IRecommendCallBac
             recommendPresenter.getRecommendList();
             LogUtils.d(TAG,"成功获取推荐列表");
         }
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        //执行点击事件
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
     }
 }
