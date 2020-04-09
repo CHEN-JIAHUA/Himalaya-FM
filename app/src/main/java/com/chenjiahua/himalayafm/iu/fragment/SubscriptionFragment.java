@@ -10,7 +10,7 @@ import com.chenjiahua.himalayafm.base.BaseFragment;
 public class SubscriptionFragment extends BaseFragment {
     @Override
     protected View onSubViewLoaded(LayoutInflater inflater, ViewGroup container) {
-        View inflate = inflater.inflate(R.layout.fragment_recommend, container, false);
+        View inflate = inflater.inflate(R.layout.fragment_subscription, container, false);
         return inflate;
     }
 }
