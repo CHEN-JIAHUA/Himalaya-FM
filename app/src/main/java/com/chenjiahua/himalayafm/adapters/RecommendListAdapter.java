@@ -44,10 +44,11 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int clickPosition = (int)v.getTag();
                 if (mItemListener != null) {
-                    mItemListener.onItemClick((Integer) v.getTag());
+                    mItemListener.onItemClick(clickPosition ,mData.get(clickPosition));
                 }
-                LogUtils.d(TAG,"click item position --- > " + v.getTag());
+                LogUtils.d(TAG,"click item position --- > " + clickPosition);
             }
         });
         holder.setData(mData.get(position));
@@ -100,6 +101,6 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     }
 
     public interface OnItemClickListener{
-        void onItemClick(int position);
+        void onItemClick(int position, Album album);
     }
 }

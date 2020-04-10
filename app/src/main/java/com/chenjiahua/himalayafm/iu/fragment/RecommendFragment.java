@@ -2,15 +2,11 @@ package com.chenjiahua.himalayafm.iu.fragment;
 
 import android.content.Intent;
 import android.graphics.Rect;
-import android.nfc.Tag;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,6 +15,7 @@ import com.chenjiahua.himalayafm.R;
 import com.chenjiahua.himalayafm.adapters.RecommendListAdapter;
 import com.chenjiahua.himalayafm.base.BaseFragment;
 import com.chenjiahua.himalayafm.interfaces.IRecommendCallBack;
+import com.chenjiahua.himalayafm.presenters.AlbumDetailPresenterImpl;
 import com.chenjiahua.himalayafm.presenters.RecommendPresenter;
 import com.chenjiahua.himalayafm.utils.LogUtils;
 import com.chenjiahua.himalayafm.view.UILoader;
@@ -149,7 +146,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendCallBac
     }
 
     @Override
-    public void onItemClick(int position) {
+    public void onItemClick(int position, Album album) {
+        AlbumDetailPresenterImpl.getsInstance().setTargetAlbum(album);
         //执行点击事件
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);
