@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import com.chenjiahua.himalayafm.R;
 import com.chenjiahua.himalayafm.base.BaseApplication;
 
+import java.util.logging.Handler;
+
 public abstract class UILoader extends FrameLayout {
 
     private View loadingView;

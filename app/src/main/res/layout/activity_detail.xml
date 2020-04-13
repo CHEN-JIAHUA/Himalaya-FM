@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+<!-- 大图片 毛玻璃效果-->
 <ImageView
     android:id="@+id/iv_large_cover"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="160dp"
     android:scaleType="fitXY"
     android:background="#00f000"/>
-
+<!-- 头像 -->
     <com.chenjiahua.himalayafm.view.RoundRectImageView
         android:id="@+id/iv_small_cover"
         android:layout_width="75dp"
@@ -17,7 +17,7 @@
         android:layout_marginTop="-40dp"
         android:layout_marginStart="10dp"
         android:layout_below="@id/iv_large_cover"/>
-
+<!--专辑信息-->
     <LinearLayout
         android:id="@+id/track_info_widget"
         android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
         android:layout_below="@id/iv_large_cover"
         android:layout_marginTop="-40dp"
         android:layout_marginStart="20dp">
-
+<!--专辑标题-->
         <TextView
             android:id="@+id/track_title_text"
             android:layout_width="wrap_content"
@@ -36,17 +36,87 @@
             android:textColor="@android:color/white"
             android:textSize="22sp"
             android:text="专辑标题"/>
-
+<!--作者-->
         <TextView
             android:id="@+id/track_author_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="作者名称"
+            android:textColor="@android:color/black"
             android:layout_marginTop="10dp"
-            android:layout_gravity="center_horizontal"
-            />
-
-
+            android:layout_gravity="center_horizontal" />
     </LinearLayout>
+
+<!--    订阅布局    -->
+    <RelativeLayout
+        android:id="@+id/detail_book_widget"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/iv_large_cover">
+
+        <TextView
+            android:id="@+id/button_2_book"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:background="@drawable/shape_subscription_bg"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:text="+订阅"
+            android:textColor="@android:color/white"
+            android:gravity="center"/>
+    </RelativeLayout>
+
+<!--    播放控制布局    -->
+    <RelativeLayout
+        android:id="@+id/play_control_widget"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/detail_book_widget">
+
+        <ImageView
+            android:id="@+id/detail_play_control"
+            android:layout_width="19dp"
+            android:layout_height="19dp"
+            android:src="@mipmap/play_black_normal"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="继续播放"
+            android:layout_toRightOf="@id/detail_play_control"
+            android:textColor="@android:color/black"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"/>
+
+        <TextView
+            android:id="@+id/selected_tracks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选集"
+            android:textColor="@android:color/black"
+            android:layout_toLeftOf="@id/arrow_icon_iv"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="5dp"/>
+        
+        <ImageView
+            android:id="@+id/arrow_icon_iv"
+            android:layout_width="12dp"
+            android:layout_height="6dp"
+            android:layout_marginEnd="15dp"
+            android:layout_alignParentEnd="true"
+            android:src="@mipmap/arrow_icon"
+            android:layout_centerVertical="true"/>
+
+
+    </RelativeLayout>
+<!--  节目详情播放列表  -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@id/play_control_widget"
+        android:id="@+id/detail_content_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

@@ -1,6 +1,5 @@
 package com.chenjiahua.himalayafm;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
