@@ -115,7 +115,7 @@ public class RecommendPresenter implements IRecommendPresenter {
 
 
     @Override
-    public void registerViewCallBack(IRecommendCallBack callBack) {
+    public void registerCallback(IRecommendCallBack callBack) {
         //如果没有包含的话就添加
         if (mCallBacks != null && !mCallBacks.contains(callBack)) {
             mCallBacks.add(callBack);
@@ -123,8 +123,8 @@ public class RecommendPresenter implements IRecommendPresenter {
     }
 
     @Override
-    public void unRegisterViewCallBack(IRecommendCallBack callBack) {
-       //取消注册
+    public void unRegisterCallback(IRecommendCallBack callBack) {
+        //取消注册
         if (mCallBacks != null) {
             mCallBacks.remove(callBack);
         }

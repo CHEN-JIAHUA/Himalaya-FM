@@ -1,7 +1,9 @@
 package com.chenjiahua.himalayafm.interfaces;
 
 
-public interface IDetailPresenter {
+import com.chenjiahua.himalayafm.base.IBasePresenter;
+
+public interface IDetailPresenter extends IBasePresenter<IAlbumDetailViewCallback> {
 
     /**
      * 下拉刷新内容
@@ -21,7 +23,5 @@ public interface IDetailPresenter {
     void getAlbumDetail(int categoryId,int page);
 
 
-    void registerViewCallback(IAlbumDetailViewCallback callback);
 
-    void unRegisterViewCallback(IAlbumDetailViewCallback callback);
 }

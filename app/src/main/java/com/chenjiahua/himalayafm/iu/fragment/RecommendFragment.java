@@ -48,7 +48,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendCallBac
 
 //       获取到逻辑层的对象
         recommendPresenter = RecommendPresenter.getInstance();
-        recommendPresenter.registerViewCallBack(this);
+        recommendPresenter.registerCallback(this);
         //获取推荐列表
         recommendPresenter.getRecommendList();
 //        返回View 给界面显示
@@ -129,9 +129,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendCallBac
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //todo:取消接口的注册，避免内存泄漏
         if (recommendPresenter != null) {
-            recommendPresenter.unRegisterViewCallBack(this);
+            recommendPresenter.unRegisterCallback(this);
         }
 
     }

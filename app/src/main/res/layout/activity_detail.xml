@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#fff4f4f4">
 <!-- 大图片 毛玻璃效果-->
 <ImageView
     android:id="@+id/iv_large_cover"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="120dp"
     android:scaleType="fitXY"
     android:background="#00f000"/>
 <!-- 头像 -->
@@ -51,7 +52,7 @@
     <RelativeLayout
         android:id="@+id/detail_book_widget"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="35dp"
         android:layout_below="@id/iv_large_cover">
 
         <TextView
@@ -71,7 +72,7 @@
     <RelativeLayout
         android:id="@+id/play_control_widget"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="25dp"
         android:layout_below="@id/detail_book_widget">
 
         <ImageView
