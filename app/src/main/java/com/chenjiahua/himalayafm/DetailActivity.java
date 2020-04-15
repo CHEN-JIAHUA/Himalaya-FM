@@ -19,6 +19,7 @@ import com.chenjiahua.himalayafm.adapters.DetailListAdapter;
 import com.chenjiahua.himalayafm.base.BaseActivity;
 import com.chenjiahua.himalayafm.interfaces.IAlbumDetailViewCallback;
 import com.chenjiahua.himalayafm.presenters.AlbumDetailPresenterImpl;
+import com.chenjiahua.himalayafm.presenters.PlayerPresenterImpl;
 import com.chenjiahua.himalayafm.utils.ImageBlur;
 import com.chenjiahua.himalayafm.utils.LogUtils;
 import com.squareup.picasso.Callback;
@@ -140,11 +141,19 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     @Override
-    public void onItemClick() {
+    public void onItemClick(List<Track> data, int position) {
         skip2PlaybackView();
+        setPlayListData(data,position);
+    }
+
+    private void setPlayListData(List<Track> data, int position) {
+        //设置播放器的数据
+        PlayerPresenterImpl playerPresenter = PlayerPresenterImpl.getPlayerPresenter();
+        playerPresenter.setPlayList(data,position);
     }
 
     private void skip2PlaybackView() {
+
         //TODO:跳转到播放页面
         Intent intent = new Intent(this, PlaybackActivity.class);
         startActivity(intent);

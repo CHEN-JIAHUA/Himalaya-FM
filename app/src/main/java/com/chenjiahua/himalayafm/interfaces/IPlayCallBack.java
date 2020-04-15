@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 播放器回调
  */
-interface IPlayCallBack {
+public interface IPlayCallBack {
 
     /**
      * 开始播放

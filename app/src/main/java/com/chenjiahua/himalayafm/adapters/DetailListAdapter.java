@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.InnerHolder> {
 
-    private SimpleDateFormat mDetailData = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat mDetailDate = new SimpleDateFormat("yyyy-MM-dd");
     private SimpleDateFormat mDetailDuration = new SimpleDateFormat("mm:ss");
     private static final String TAG = "DetailListAdapter";
     private List<Track> mData = new ArrayList<>();
@@ -57,7 +57,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
         int durationMil = track.getDuration() * 1000;
         String duration = mDetailDuration.format(durationMil);
         detailItemDuration.setText(duration);
-        String format = mDetailData.format(track.getUpdatedAt());
+        String format = mDetailDate.format(track.getUpdatedAt());
         detailItemUpdateTime.setText(format);
 
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +66,8 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
                 Toast.makeText(v.getContext(),"点击了"+ (position+1),Toast.LENGTH_SHORT).show();
 //                TODO:详情页面的点击事件
                 if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick();
+                    //参数需要有列表和位置
+                    mItemClickListener.onItemClick(mData,position);
                 }
             }
         });
@@ -99,6 +100,6 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     }
 
     public interface OnItemClickListener{
-        void onItemClick();
+        void onItemClick(List<Track> data, int position);
     }
 }

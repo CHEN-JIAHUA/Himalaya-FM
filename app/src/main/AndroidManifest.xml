@@ -35,7 +35,7 @@
         </activity>
         <activity android:name=".DetailActivity" />
         <activity android:name=".PlaybackActivity"/>
-        <service android:name="com.chenjiahua.himalayafm.services.XmPlayService"
-            android:process=":play"/>
+        <service android:name="com.ximalaya.ting.android.opensdk.player.service.XmPlayerService"
+        android:process=":player"/>
     </application>
 </manifest>

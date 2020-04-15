@@ -10,7 +10,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "mips"
+        }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -34,9 +38,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // SDK在解析请求返回的JSON数据时用到
     implementation 'com.google.code.gson:gson:2.8.6'
-// SDK联网框架使用okhttp
+// SDK联网框架使用OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.4.0'
-// SDK联网框架使用okhttp
+// SDK联网框架使用OkHttp
     implementation 'com.squareup.okio:okio:2.4.3'
     implementation files('libs/TingPhoneOpenSDK_7.1.6.jar')
     implementation files('libs/XmDownload_1.7.jar')

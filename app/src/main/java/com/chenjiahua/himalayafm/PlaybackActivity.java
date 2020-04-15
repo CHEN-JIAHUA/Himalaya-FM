@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.chenjiahua.himalayafm.base.BaseActivity;
+import com.chenjiahua.himalayafm.presenters.PlayerPresenterImpl;
 
 public class PlaybackActivity extends BaseActivity {
 
@@ -12,5 +13,8 @@ public class PlaybackActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
+        //TODO:测试一下播放
+        PlayerPresenterImpl playerPresenter = PlayerPresenterImpl.getPlayerPresenter();
+        playerPresenter.play();
     }
 }
