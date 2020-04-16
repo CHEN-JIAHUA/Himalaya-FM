@@ -53,5 +53,11 @@ public interface IPlayPresenter extends IBasePresenter<IPlayCallBack> {
      */
     void seekTo(int progress);
 
+    /**
+     * 当前播放器是否正在播放音乐
+     * @return
+     */
+    boolean isPlay();
+
 
 }
