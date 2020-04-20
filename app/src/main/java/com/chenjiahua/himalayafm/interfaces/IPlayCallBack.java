@@ -1,6 +1,5 @@
 package com.chenjiahua.himalayafm.interfaces;
 
-import android.os.Trace;
 
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
@@ -46,7 +45,7 @@ public interface IPlayCallBack {
      * @param currentProgress
      * @param total
      */
-    void onPlayProgress(long currentProgress,long total );
+    void onPlayProgress(int currentProgress,int total );
 
 
     /**
@@ -59,5 +58,10 @@ public interface IPlayCallBack {
      */
     void onAdFinish();
 
+    /**
+     * 更新播放页面的专辑主题
+     * @param track
+     */
+    void onUpdateTrack(Track track);
 
 }

@@ -1,5 +1,7 @@
 package com.chenjiahua.himalayafm.presenters;
 
+
+
 import com.chenjiahua.himalayafm.base.BaseApplication;
 import com.chenjiahua.himalayafm.interfaces.IPlayCallBack;
 import com.chenjiahua.himalayafm.interfaces.IPlayPresenter;
@@ -22,6 +24,8 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     private List<IPlayCallBack> mIPlayCallBacks = new ArrayList<>();
     private static final String TAG = "PlayerPresenterImpl";
     private final XmPlayerManager mXmPlayerManager;
+    private String mTrackTitle;
+    private Track mTrack;
 
     private PlayerPresenterImpl() {
         mXmPlayerManager = XmPlayerManager.getInstance(BaseApplication.getAppContext());
@@ -29,6 +33,7 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
         mXmPlayerManager.addAdsStatusListener(this);
         //注册播放器状态相关的接口
         mXmPlayerManager.addPlayerStatusListener(this);
+        //获取专辑的声音播放列表
     }
 
     private static PlayerPresenterImpl sPlayerPresenter;
@@ -48,11 +53,16 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     private boolean isPlayListSet = false;
 
     public void setPlayList(List<Track> trackList,int index){
+        LogUtils.d(TAG,"setPlayList === " + mTrackTitle);
         if (mXmPlayerManager != null) {
             mXmPlayerManager.setPlayList(trackList,index);
             LogUtils.d(TAG,"set playList Successful");
             isPlayListSet = true;
+            mTrack = trackList.get(index);
+//            mTrackTitle = track.getTrackTitle();
+
         }else {
+
             LogUtils.d(TAG,"mXmPlayerManager is null");
         }
     }
@@ -81,21 +91,29 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
 
     @Override
     public void playPre() {
+        mXmPlayerManager.playPre();
 
     }
 
     @Override
     public void playNext() {
-
+        mXmPlayerManager.playNext();
     }
 
     @Override
     public void switchPlayMode(XmPlayListControl.PlayMode mode) {
-
+        mXmPlayerManager.setPlayMode(mode);
     }
 
     @Override
     public void getPlayList() {
+        if (mXmPlayerManager != null) {
+            List<Track> playList = mXmPlayerManager.getPlayList();
+            for (IPlayCallBack playCallBack : mIPlayCallBacks) {
+                playCallBack.onPlayListLoaded(playList);
+            }
+        }
+
 
     }
 
@@ -106,7 +124,7 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
 
     @Override
     public void seekTo(int progress) {
-
+        mXmPlayerManager.seekTo(progress);
     }
 
     @Override
@@ -116,17 +134,16 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
 
     @Override
     public void registerCallback(IPlayCallBack iPlayCallBack) {
+        iPlayCallBack.onUpdateTrack(mTrack);
         if (!mIPlayCallBacks.contains(iPlayCallBack)) {
             mIPlayCallBacks.add(iPlayCallBack);
         }
+        LogUtils.d(TAG,"registerCallback --- > " + mTrack.getTrackTitle());
     }
 
     @Override
     public void unRegisterCallback(IPlayCallBack iPlayCallBack) {
-        if (mIPlayCallBacks.contains(iPlayCallBack)) {
             mIPlayCallBacks.remove(iPlayCallBack);
-        }
-
     }
 
 //===================  广告相关的回调  start ========================
@@ -210,8 +227,18 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     }
 
     @Override
-    public void onSoundSwitch(PlayableModel playableModel, PlayableModel playableModel1) {
-        LogUtils.d(TAG,"onSoundSwitch...");
+    public void onSoundSwitch(PlayableModel lastModel, PlayableModel curModel) {
+        if (lastModel != null) {
+            LogUtils.d(TAG,"onSoundSwitch..." + lastModel.getKind());
+        }
+        LogUtils.d(TAG,"onSoundSwitch..." + curModel.getKind());
+        if (curModel instanceof Track) {
+            Track curTrack = (Track) curModel;
+            mTrackTitle = curTrack.getTrackTitle();
+            for (IPlayCallBack playCallBack : mIPlayCallBacks) {
+                playCallBack.onUpdateTrack(mTrack);
+            }
+        }
     }
 
     @Override
