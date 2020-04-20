@@ -3,6 +3,7 @@ package com.chenjiahua.himalayafm;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -21,10 +22,12 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 
+import org.xml.sax.helpers.LocatorImpl;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
+public class PlaybackActivity extends BaseActivity implements IPlayCallBack, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "PlaybackActivity";
     private ImageView mPlayOrPauseBt;
@@ -46,7 +49,8 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
     private String mTrackTitleText;
     private TrackCoverAdapter mTrackCoverAdapter;
     private Track mTrack;
-
+    private ViewPager mTrackCoverVp;
+    private boolean mIsUserSlidePage = false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +60,6 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
         initView();
         mPlayerPresenter.getPlayList();
         initEvent();
-        startPlay();
 
         //TODO:测试一下播放
 //        PlayerPresenterImpl playerPresenter = PlayerPresenterImpl.getPlayerPresenter();
@@ -64,22 +67,16 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
 
     }
 
-    private void startPlay() {
-        if (mPlayerPresenter != null) {
-
-            mPlayerPresenter.play();
-        }
-    }
-
+    @SuppressLint("ClickableViewAccessibility")
     private void initEvent() {
         mPlayOrPauseBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mPlayerPresenter.isPlay()) {
-                    mPlayOrPauseBt.setImageResource(R.mipmap.stop_normal);
+                    mPlayOrPauseBt.setImageResource(R.drawable.selector_play_stop);
                     mPlayerPresenter.pause();
                 } else {
-                    mPlayOrPauseBt.setImageResource(R.mipmap.play_normal);
+                    mPlayOrPauseBt.setImageResource(R.drawable.selector_player_play);
                     mPlayerPresenter.play();
                 }
             }
@@ -125,6 +122,21 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
             }
         });
 
+        mTrackCoverVp.addOnPageChangeListener(this);
+
+        mTrackCoverVp.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action){
+                    case MotionEvent.ACTION_DOWN:
+                        mIsUserSlidePage = true;
+                        break;
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -148,11 +160,11 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
             mPlaybackTrackTitle.setText(mTrackTitleText);
         }
 
-        ViewPager trackCoverVp = this.findViewById(R.id.track_playback_cover);
+        mTrackCoverVp = this.findViewById(R.id.track_playback_cover);
         //创建适配器
         mTrackCoverAdapter = new TrackCoverAdapter();
         //设置适配器
-        trackCoverVp.setAdapter(mTrackCoverAdapter);
+        mTrackCoverVp.setAdapter(mTrackCoverAdapter);
     }
 
     @Override
@@ -240,7 +252,7 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
     }
 
     @Override
-    public void onUpdateTrack(Track track) {
+    public void onUpdateTrack(Track track,int index) {
         this.mTrackTitleText = track.getTrackTitle();
         if (mPlaybackTrackTitle != null) {
             mPlaybackTrackTitle.setText(mTrackTitleText);
@@ -248,5 +260,28 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack {
         }
         //当节目改变的时候，我们就获取当前的播放的位置
         //TODO：
+        if (mTrackCoverVp != null) {
+                mTrackCoverVp.setCurrentItem(index,true);
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        LogUtils.d(TAG,"POSITION --- > " + position);
+        if (mPlayerPresenter != null && mIsUserSlidePage) {
+            mPlayerPresenter.playByIndex(position);
+        }
+        mIsUserSlidePage = false;
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

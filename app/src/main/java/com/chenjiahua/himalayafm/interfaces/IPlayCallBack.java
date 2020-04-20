@@ -62,6 +62,6 @@ public interface IPlayCallBack {
      * 更新播放页面的专辑主题
      * @param track
      */
-    void onUpdateTrack(Track track);
+    void onUpdateTrack(Track track ,int index);
 
 }

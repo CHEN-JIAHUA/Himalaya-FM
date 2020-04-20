@@ -90,7 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:src="@mipmap/previous_normal"/>
+                android:src="@drawable/selector_play_pre"/>
 
             <ImageView
                 android:id="@+id/play_or_pause_bt"
@@ -104,14 +104,14 @@
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:src="@mipmap/next_normal"/>
+                android:src="@drawable/selector_player_next"/>
 
             <ImageView
                 android:id="@+id/play_list_show_or_hide_bt"
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:src="@mipmap/player_icon_list_normal"/>
+                android:src="@drawable/selector_play_list"/>
 
             
         </LinearLayout>
