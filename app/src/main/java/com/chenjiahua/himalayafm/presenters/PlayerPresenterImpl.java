@@ -104,7 +104,9 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
 
     @Override
     public void switchPlayMode(XmPlayListControl.PlayMode mode) {
-        mXmPlayerManager.setPlayMode(mode);
+        if (mXmPlayerManager != null) {
+            mXmPlayerManager.setPlayMode(mode);
+        }
     }
 
     @Override
@@ -282,9 +284,9 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     public void onPlayProgress(int currPos, int duration) {
         //单位是 毫秒
         for (IPlayCallBack playCallBack : mIPlayCallBacks) {
-            playCallBack.onPlayProgress(currPos,duration);
+            playCallBack.onPlayProgressChange(currPos,duration);
         }
-        LogUtils.d(TAG,"onPlayProgress currPos -- > "+ currPos + "   duration ==> " + duration );
+        LogUtils.d(TAG,"onPlayProgressChange currPos -- > "+ currPos + "   duration ==> " + duration );
         //TODO: 保存当前的播放时间，跟声音时长 回调？
     }
 

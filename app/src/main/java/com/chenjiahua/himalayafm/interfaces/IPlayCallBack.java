@@ -7,6 +7,7 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 import java.util.List;
 
+
 /**
  * 播放器回调
  */
@@ -45,7 +46,7 @@ public interface IPlayCallBack {
      * @param currentProgress
      * @param total
      */
-    void onPlayProgress(int currentProgress,int total );
+    void onPlayProgressChange(int currentProgress, int total );
 
 
     /**

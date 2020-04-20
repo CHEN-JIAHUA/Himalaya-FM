@@ -18,6 +18,7 @@ import com.chenjiahua.himalayafm.interfaces.IPlayCallBack;
 import com.chenjiahua.himalayafm.presenters.PlayerPresenterImpl;
 import com.chenjiahua.himalayafm.utils.LogUtils;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
@@ -25,7 +26,14 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 import org.xml.sax.helpers.LocatorImpl;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
 
 public class PlaybackActivity extends BaseActivity implements IPlayCallBack, ViewPager.OnPageChangeListener {
 
@@ -51,6 +59,17 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
     private Track mTrack;
     private ViewPager mTrackCoverVp;
     private boolean mIsUserSlidePage = false;
+    private ImageView mPlayModeBt;
+    private static Map<XmPlayListControl.PlayMode, XmPlayListControl.PlayMode> sPlayModeMap = new HashMap<>();
+    private XmPlayListControl.PlayMode mCurrentMode = PLAY_MODEL_LIST;
+
+    static{
+        sPlayModeMap.put(PLAY_MODEL_LIST,PLAY_MODEL_LIST_LOOP);
+        sPlayModeMap.put(PLAY_MODEL_LIST_LOOP,PLAY_MODEL_RANDOM);
+        sPlayModeMap.put(PLAY_MODEL_RANDOM,PLAY_MODEL_SINGLE_LOOP);
+        sPlayModeMap.put(PLAY_MODEL_SINGLE_LOOP,PLAY_MODEL_LIST);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +105,9 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
+                    LogUtils.d(TAG,"is From User --- >" + fromUser);
                     mCurProgress = progress;
+                    LogUtils.d(TAG,"progress --- > " + progress);
                 }
             }
 
@@ -137,6 +158,52 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
             }
         });
 
+        mPlayModeBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //处理播放模式的切换 PlayMode
+                //默认播放器模式是PLAY_MODEL_LIST 列表循环
+                //PLAY_MODEL_SINGLE_LOOP 单曲循环播放
+                //PLAY_MODEL_LIST_LOOP列表循环
+                //PLAY_MODEL_RANDOM 随机播放
+
+                //TODO: 执行播放状态的切换
+                //根据当前的 Mode 获取另一个Mode
+
+
+                XmPlayListControl.PlayMode playMode = sPlayModeMap.get(mCurrentMode);
+                //修改播放模式
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.switchPlayMode(playMode);
+                    mCurrentMode = playMode;
+                    updatePlayModeBtnImg();
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 根据当前的状态，更新播放模式
+     *
+     */
+    private void updatePlayModeBtnImg() {
+        int resId = R.drawable.selector_play_model_list;
+        switch(mCurrentMode){
+            case PLAY_MODEL_LIST:
+                resId = R.drawable.selector_play_model_list;
+                break;
+            case PLAY_MODEL_RANDOM:
+                resId = R.drawable.selector_play_model_random;
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                resId = R.drawable.selector_play_model_list_loop;
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                resId = R.drawable.selector_play_single_loop;
+                break;
+        }
+        mPlayModeBt.setImageResource(resId);
     }
 
     @Override
@@ -165,6 +232,12 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         mTrackCoverAdapter = new TrackCoverAdapter();
         //设置适配器
         mTrackCoverVp.setAdapter(mTrackCoverAdapter);
+
+        //切换播放模式的按钮
+        mPlayModeBt = this.findViewById(R.id.switch_play_mode_bt);
+
+
+
     }
 
     @Override
@@ -208,11 +281,13 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
 
     @Override
     public void onSwitchPlayMode(XmPlayListControl.PlayMode playMode) {
+        mCurrentMode = playMode;
+        updatePlayModeBtnImg();
 
     }
 
     @Override
-    public void onPlayProgress(int currentProgress, int total) {
+    public void onPlayProgressChange(int currentProgress, int total) {
         //
         mSeekBar.setMax(total);
         if (total > 1000 * 60 * 60) {
@@ -230,12 +305,12 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         if (mCurPosTx != null) {
             mCurPosTx.setText(mCurPos);
         }
-
+        mCurProgress = currentProgress;
 //        更新进度
 //        计算当前的进度
         if (!isUserTouch) {
             mSeekBar.setProgress(mCurProgress);
-//            LogUtils.d(TAG,"User Touch to change current Progress --- > " + mCurProgress);
+            LogUtils.d(TAG,"User Touch to change current Progress --- > " + mCurProgress);
         }
 
 
