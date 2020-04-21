@@ -2,6 +2,9 @@ package com.chenjiahua.himalayafm.presenters;
 
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.chenjiahua.himalayafm.base.BaseApplication;
 import com.chenjiahua.himalayafm.interfaces.IPlayCallBack;
 import com.chenjiahua.himalayafm.interfaces.IPlayPresenter;
@@ -20,6 +23,11 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
+
 public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
 
     private List<IPlayCallBack> mIPlayCallBacks = new ArrayList<>();
@@ -28,6 +36,18 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     private String mTrackTitle;
     private Track mTrack;
     private int playIndex = 0;
+    private final SharedPreferences mPlayModeSp;
+
+    public static final int PLAY_MODEL_LIST_INT = 0;
+    public static final int PLAY_MODEL_SINGLE_LOOP_INT = 1;
+    public static final int PLAY_MODEL_LIST_LOOP_INT= 2;
+    public static final int PLAY_MODEL_RANDOM_INT= 3;
+
+//    SharePreferences key and name
+    public static String PLAY_MODEL_SP_NAME = "playMode";
+    public static String PLAY_MODEL_SP_KEY = "playKey";
+    private XmPlayListControl.PlayMode mCurPlayMode = PLAY_MODEL_LIST;
+
 
     private PlayerPresenterImpl() {
         mXmPlayerManager = XmPlayerManager.getInstance(BaseApplication.getAppContext());
@@ -35,7 +55,8 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
         mXmPlayerManager.addAdsStatusListener(this);
         //注册播放器状态相关的接口
         mXmPlayerManager.addPlayerStatusListener(this);
-        //获取专辑的声音播放列表
+        //需要记录当前的播放模式 -- sharePreference
+        mPlayModeSp = BaseApplication.getAppContext().getSharedPreferences(PLAY_MODEL_SP_NAME, Context.MODE_PRIVATE);
     }
 
     private static PlayerPresenterImpl sPlayerPresenter;
@@ -102,11 +123,51 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
         mXmPlayerManager.playNext();
     }
 
+    /**
+     * 修改播放状态
+     * @param mode
+     */
     @Override
     public void switchPlayMode(XmPlayListControl.PlayMode mode) {
+        this.mCurPlayMode = mode;
         if (mXmPlayerManager != null) {
-            mXmPlayerManager.setPlayMode(mode);
+            mXmPlayerManager.setPlayMode(mCurPlayMode);
+            //通知UI更新播放模式
+            for (IPlayCallBack playCallBack : mIPlayCallBacks) {
+                playCallBack.onSwitchPlayMode(mCurPlayMode);
+            }
+
+            SharedPreferences.Editor editor = mPlayModeSp.edit();
+            editor.putInt(PLAY_MODEL_SP_KEY, getIntByPlayMode(mCurPlayMode));
+            editor.commit();
         }
+    }
+    private int getIntByPlayMode(XmPlayListControl.PlayMode mode){
+        switch (mode){
+            case PLAY_MODEL_SINGLE_LOOP:
+                return PLAY_MODEL_SINGLE_LOOP_INT;
+            case PLAY_MODEL_LIST_LOOP:
+                return PLAY_MODEL_LIST_LOOP_INT;
+            case PLAY_MODEL_RANDOM:
+                return PLAY_MODEL_RANDOM_INT;
+            case PLAY_MODEL_LIST:
+                return PLAY_MODEL_LIST_INT;
+        }
+        return PLAY_MODEL_LIST_INT;
+    }
+
+    private XmPlayListControl.PlayMode getPlayModeByInt(int modeIndex){
+        switch (modeIndex){
+            case PLAY_MODEL_SINGLE_LOOP_INT:
+                return PLAY_MODEL_SINGLE_LOOP;
+            case PLAY_MODEL_LIST_LOOP_INT:
+                return PLAY_MODEL_LIST_LOOP;
+            case PLAY_MODEL_RANDOM_INT:
+                return PLAY_MODEL_RANDOM;
+            case PLAY_MODEL_LIST_INT:
+                return PLAY_MODEL_LIST;
+        }
+        return PLAY_MODEL_LIST;
     }
 
     @Override
@@ -141,6 +202,9 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     @Override
     public void registerCallback(IPlayCallBack iPlayCallBack) {
         iPlayCallBack.onUpdateTrack(mTrack, playIndex);
+        int modeInt = mPlayModeSp.getInt(PLAY_MODEL_SP_KEY, PLAY_MODEL_LIST_INT);
+        mCurPlayMode = getPlayModeByInt(modeInt);
+        iPlayCallBack.onSwitchPlayMode(mCurPlayMode);
         if (!mIPlayCallBacks.contains(iPlayCallBack)) {
             mIPlayCallBacks.add(iPlayCallBack);
         }
@@ -229,7 +293,9 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
 
     @Override
     public void onSoundPrepared() {
+
         LogUtils.d(TAG,"onSoundPrepared...");
+        mXmPlayerManager.setPlayMode(mCurPlayMode);
         if (mXmPlayerManager.getPlayerStatus() == PlayerConstants.STATE_PREPARED) {
             mXmPlayerManager.play();
         }

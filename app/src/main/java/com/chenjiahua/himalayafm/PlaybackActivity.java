@@ -75,8 +75,8 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playback);
         mPlayerPresenter = PlayerPresenterImpl.getPlayerPresenter();
-        mPlayerPresenter.registerCallback(this);
         initView();
+        mPlayerPresenter.registerCallback(this);
         mPlayerPresenter.getPlayList();
         initEvent();
 
@@ -161,11 +161,11 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         mPlayModeBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //处理播放模式的切换 PlayMode
-                //默认播放器模式是PLAY_MODEL_LIST 列表循环
-                //PLAY_MODEL_SINGLE_LOOP 单曲循环播放
-                //PLAY_MODEL_LIST_LOOP列表循环
-                //PLAY_MODEL_RANDOM 随机播放
+                //处理播放模式的切换   PlayMode
+                //默认播放器模式是         PLAY_MODEL_LIST            列表循环
+                //                       PLAY_MODEL_SINGLE_LOOP     单曲循环播放
+                //                       PLAY_MODEL_LIST_LOOP       列表循环
+                //                       PLAY_MODEL_RANDOM          随机播放
 
                 //TODO: 执行播放状态的切换
                 //根据当前的 Mode 获取另一个Mode
@@ -281,6 +281,7 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
 
     @Override
     public void onSwitchPlayMode(XmPlayListControl.PlayMode playMode) {
+        //更新播放模式，并且修改UI
         mCurrentMode = playMode;
         updatePlayModeBtnImg();
 
