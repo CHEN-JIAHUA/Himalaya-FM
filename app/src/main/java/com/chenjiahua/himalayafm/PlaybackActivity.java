@@ -3,11 +3,13 @@ package com.chenjiahua.himalayafm;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
@@ -17,6 +19,7 @@ import com.chenjiahua.himalayafm.base.BaseActivity;
 import com.chenjiahua.himalayafm.interfaces.IPlayCallBack;
 import com.chenjiahua.himalayafm.presenters.PlayerPresenterImpl;
 import com.chenjiahua.himalayafm.utils.LogUtils;
+import com.chenjiahua.himalayafm.view.HiPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
@@ -39,8 +42,8 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
 
     private static final String TAG = "PlaybackActivity";
     private ImageView mPlayOrPauseBt;
-    private PlayerPresenterImpl mPlayerPresenter;
 
+    private PlayerPresenterImpl mPlayerPresenter;
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat mMinSimpleDateFormat = new SimpleDateFormat("mm:ss");
     private SimpleDateFormat mHourSimpleDateFormat = new SimpleDateFormat("hh:mm:ss");
@@ -69,6 +72,9 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         sPlayModeMap.put(PLAY_MODEL_RANDOM,PLAY_MODEL_SINGLE_LOOP);
         sPlayModeMap.put(PLAY_MODEL_SINGLE_LOOP,PLAY_MODEL_LIST);
     }
+
+    private ImageView mPlayListShowOrHide;
+    private HiPopWindow mHiPopWindow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,6 +187,17 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
             }
         });
 
+        mPlayListShowOrHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            //TEST
+            //Toast.makeText(v.getContext(),"CLICK SHOW OR HIDE TRACK LIST...",Toast.LENGTH_SHORT).show();
+            //TODO：显示播放列表   HiPopWindow
+                mHiPopWindow.showAtLocation(v, Gravity.BOTTOM,0,0);
+
+            }
+        });
+
     }
 
     /**
@@ -235,8 +252,10 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
 
         //切换播放模式的按钮
         mPlayModeBt = this.findViewById(R.id.switch_play_mode_bt);
+        //显示或者隐藏播放歌单列表
+        mPlayListShowOrHide = this.findViewById(R.id.play_list_show_or_hide_bt);
 
-
+        mHiPopWindow = new HiPopWindow();
 
     }
 

@@ -208,7 +208,7 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
         if (!mIPlayCallBacks.contains(iPlayCallBack)) {
             mIPlayCallBacks.add(iPlayCallBack);
         }
-        LogUtils.d(TAG,"registerCallback --- > " + mTrack.getTrackTitle());
+//        LogUtils.d(TAG,"registerCallback --- > " + mTrack.getTrackTitle());
     }
 
     @Override
