@@ -75,6 +75,7 @@ public class HiPopWindow extends PopupWindow {
     public void setCurPlayPos(int index){
         if (mPlaybackListAdapter != null) {
             mPlaybackListAdapter.setCurPlayPos(index);
+            mPlaybackListRv.scrollToPosition(index);
         }
     }
 }
