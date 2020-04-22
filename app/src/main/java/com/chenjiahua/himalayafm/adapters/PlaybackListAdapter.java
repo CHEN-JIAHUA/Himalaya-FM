@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chenjiahua.himalayafm.R;
 import com.chenjiahua.himalayafm.base.BaseApplication;
 import com.chenjiahua.himalayafm.utils.LogUtils;
+import com.chenjiahua.himalayafm.view.HiPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ public class PlaybackListAdapter extends RecyclerView.Adapter<PlaybackListAdapte
     private TextView mPlayListTrackTitle;
     private ImageView mPlayIcon;
     private int mCurPlayTrackPos = 0;
+    private HiPopWindow.PlayListItemClickListener mItemClickListener = null;
+
     @NonNull
     @Override
     public PlaybackListAdapter.InnerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,7 +38,7 @@ public class PlaybackListAdapter extends RecyclerView.Adapter<PlaybackListAdapte
 
     //这里好像调用了好多次
     @Override
-    public void onBindViewHolder(@NonNull PlaybackListAdapter.InnerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PlaybackListAdapter.InnerHolder holder, final int position) {
         Track track = mPlaybackTrackData.get(position);
         LogUtils.d(TAG,"mPlaybackTrackData  ----  >  +" + mPlaybackTrackData +"mPlayListTrackTitle  --- > " + mPlayListTrackTitle);
         mPlayListTrackTitle = holder.itemView.findViewById(R.id.play_list_track_title);
@@ -46,6 +50,17 @@ public class PlaybackListAdapter extends RecyclerView.Adapter<PlaybackListAdapte
         //        mCurPlayTrackPos = position;
         mPlayIcon = holder.itemView.findViewById(R.id.play_status_icon);
         mPlayIcon.setVisibility(mCurPlayTrackPos == position?View.VISIBLE:View.GONE);
+
+        //设置点击
+        mPlayListTrackTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    mItemClickListener.onItemClick(position);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -67,6 +82,10 @@ public class PlaybackListAdapter extends RecyclerView.Adapter<PlaybackListAdapte
     public void setCurPlayPos(int index) {
         mCurPlayTrackPos = index;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(HiPopWindow.PlayListItemClickListener listener) {
+            this.mItemClickListener = listener;
     }
 
     public class InnerHolder extends RecyclerView.ViewHolder {

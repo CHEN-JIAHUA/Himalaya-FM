@@ -201,18 +201,9 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
                 //                       PLAY_MODEL_SINGLE_LOOP     单曲循环播放
                 //                       PLAY_MODEL_LIST_LOOP       列表循环
                 //                       PLAY_MODEL_RANDOM          随机播放
-
-                //TODO: 执行播放状态的切换
+                //执行播放状态的切换
                 //根据当前的 Mode 获取另一个Mode
-
-
-                XmPlayListControl.PlayMode playMode = sPlayModeMap.get(mCurrentMode);
-                //修改播放模式
-                if (mPlayerPresenter != null) {
-                    mPlayerPresenter.switchPlayMode(playMode);
-                    mCurrentMode = playMode;
-                    updatePlayModeBtnImg();
-                }
+                switchPlayMode();
             }
         });
 
@@ -224,7 +215,6 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
             //TODO：显示播放列表   HiPopWindow
                 mHiPopWindow.showAtLocation(v, Gravity.BOTTOM,0,0);
                 //处理一下背景
-
                 mEnterBgAnim.start();
             }
         });
@@ -237,6 +227,34 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
                 mExitBgAnim.start();
             }
         });
+        //TODO:   tip：需要进行学习
+        //点击歌单列表进行播放
+        mHiPopWindow.setPlayListItemClickListener(new HiPopWindow.PlayListItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.playByIndex(position);
+                }
+            }
+        });
+
+        mHiPopWindow.setOnPlayModeClickListener(new HiPopWindow.PlayModeIconClickListener() {
+            @Override
+            public void playModeClick() {
+                switchPlayMode();
+
+            }
+        });
+    }
+
+    private void switchPlayMode() {
+        XmPlayListControl.PlayMode playMode = sPlayModeMap.get(mCurrentMode);
+        //修改播放模式
+        if (mPlayerPresenter != null) {
+            mPlayerPresenter.switchPlayMode(playMode);
+            mCurrentMode = playMode;
+            updatePlayModeBtnImg();
+        }
     }
 
     private void updateBgAlpha(float alpha) {
@@ -249,6 +267,7 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
     /**
      * 根据当前的状态，更新播放模式
      *
+     * @param
      */
     private void updatePlayModeBtnImg() {
         int resId = R.drawable.selector_play_model_list;
@@ -351,9 +370,14 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
     public void onSwitchPlayMode(XmPlayListControl.PlayMode playMode) {
         //更新播放模式，并且修改UI
         mCurrentMode = playMode;
+
+        //更新pop里的playMode
+        mHiPopWindow.updatePlayModeBtImg(mCurrentMode);
         updatePlayModeBtnImg();
 
     }
+
+
 
     @Override
     public void onPlayProgressChange(int currentProgress, int total) {

@@ -6,7 +6,9 @@ import android.graphics.drawable.TransitionDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,8 +17,10 @@ import com.chenjiahua.himalayafm.R;
 import com.chenjiahua.himalayafm.adapters.PlaybackListAdapter;
 import com.chenjiahua.himalayafm.base.BaseApplication;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.util.List;
+import java.util.Set;
 
 public class HiPopWindow extends PopupWindow {
 
@@ -24,6 +28,10 @@ public class HiPopWindow extends PopupWindow {
     private View mPlayListCloseBtn;
     private RecyclerView mPlaybackListRv;
     private PlaybackListAdapter mPlaybackListAdapter;
+    private PlayModeIconClickListener mPlayModeListener = null;
+    private TextView mPlayModeTvShow;
+    private ImageView mPlayModeIvShow;
+    private View mPlayListContainer;
 
     public HiPopWindow() {
 
@@ -38,7 +46,7 @@ public class HiPopWindow extends PopupWindow {
         setContentView(mPopView);
         //设置动画
         setAnimationStyle(R.style.pop_animation);
-//        setFocusable();
+//      setFocusable();
         initView();
         initEvent();
     }
@@ -48,6 +56,17 @@ public class HiPopWindow extends PopupWindow {
             @Override
             public void onClick(View v) {
                 HiPopWindow.this.dismiss();
+            }
+        });
+
+        mPlayListContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:执行点击PlayMode进行改变
+                if (mPlayModeListener != null) {
+                    mPlayModeListener.playModeClick();
+                }
+
             }
         });
     }
@@ -63,6 +82,13 @@ public class HiPopWindow extends PopupWindow {
         mPlaybackListAdapter = new PlaybackListAdapter();
         //设置适配器
         mPlaybackListRv.setAdapter(mPlaybackListAdapter);
+
+        //找到播放列表里的播放模式textView显示
+        mPlayModeTvShow = mPopView.findViewById(R.id.play_mode_tv_show);
+        //找到播放列表里的播放模式ImageView显示
+        mPlayModeIvShow = mPopView.findViewById(R.id.play_mode_iv_show);
+
+        mPlayListContainer = mPopView.findViewById(R.id.play_list_controller_container);
     }
 
 
@@ -78,4 +104,53 @@ public class HiPopWindow extends PopupWindow {
             mPlaybackListRv.scrollToPosition(index);
         }
     }
+
+    public void setPlayListItemClickListener(PlayListItemClickListener listener){
+        mPlaybackListAdapter.setOnItemClickListener(listener);
+    }
+
+    public void updatePlayModeBtImg(XmPlayListControl.PlayMode currentMode) {
+        updatePlayModeBtnImg(currentMode);
+    }
+    /**
+     * 根据当前的状态，更新播放模式
+     *
+     * @param
+     */
+    private void updatePlayModeBtnImg(XmPlayListControl.PlayMode playMode) {
+        int resId = R.drawable.selector_play_model_list;
+        int resText = R.string.play_mode_list_text;
+        switch(playMode){
+            case PLAY_MODEL_LIST:
+                resId = R.drawable.selector_play_model_list;
+                resText = R.string.play_mode_list_text;
+                break;
+            case PLAY_MODEL_RANDOM:
+                resId = R.drawable.selector_play_model_random;
+                resText = R.string.play_mode_random_text;
+                break;
+            case PLAY_MODEL_LIST_LOOP:
+                resId = R.drawable.selector_play_model_list_loop;
+                resText = R.string.play_mode_list_loop_text;
+                break;
+            case PLAY_MODEL_SINGLE_LOOP:
+                resId = R.drawable.selector_play_single_loop;
+                resText = R.string.play_mode_single_song_text;
+                break;
+        }
+        mPlayModeIvShow.setImageResource(resId);
+        mPlayModeTvShow.setText(resText);
+    }
+    public interface PlayListItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnPlayModeClickListener(PlayModeIconClickListener listener){
+        this.mPlayModeListener = listener;
+    }
+
+    public interface PlayModeIconClickListener{
+        void playModeClick();
+    }
+
 }

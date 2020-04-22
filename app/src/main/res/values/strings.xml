@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Himalaya FM</string>
-
+    <string name="play_mode_list_text">顺序播放</string>
+    <string name="play_mode_random_text">随机播放</string>
+    <string name="play_mode_list_loop_text">循环播放</string>
+    <string name="play_mode_single_song_text">单曲循环</string>
     <string-array name="main_content">
         <item>推荐</item>
         <item>订阅</item>
