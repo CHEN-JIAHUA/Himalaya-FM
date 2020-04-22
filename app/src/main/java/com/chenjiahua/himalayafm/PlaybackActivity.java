@@ -1,15 +1,18 @@
 package com.chenjiahua.himalayafm;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
@@ -21,12 +24,9 @@ import com.chenjiahua.himalayafm.presenters.PlayerPresenterImpl;
 import com.chenjiahua.himalayafm.utils.LogUtils;
 import com.chenjiahua.himalayafm.view.HiPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
-import com.ximalaya.ting.android.opensdk.player.XmPlayerManager;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
-
-import org.xml.sax.helpers.LocatorImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -41,6 +41,7 @@ import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl
 public class PlaybackActivity extends BaseActivity implements IPlayCallBack, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "PlaybackActivity";
+    private static final int BG_ANIM_DURATION = 200;
     private ImageView mPlayOrPauseBt;
 
     private PlayerPresenterImpl mPlayerPresenter;
@@ -75,6 +76,8 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
 
     private ImageView mPlayListShowOrHide;
     private HiPopWindow mHiPopWindow;
+    private ValueAnimator mEnterBgAnim;
+    private ValueAnimator mExitBgAnim;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,11 +88,37 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         mPlayerPresenter.registerCallback(this);
         mPlayerPresenter.getPlayList();
         initEvent();
+        initAnimator();
 
         //TODO:测试一下播放
 //        PlayerPresenterImpl playerPresenter = PlayerPresenterImpl.getPlayerPresenter();
 //        playerPresenter.play();
 
+    }
+
+    private void initAnimator() {
+        mEnterBgAnim = ValueAnimator.ofFloat(1.0f,0.7f);
+        mEnterBgAnim.setDuration(BG_ANIM_DURATION);
+        //设置一个监听器
+        mEnterBgAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                LogUtils.d(TAG,"VALUE --- > " + value);
+                updateBgAlpha(value);
+            }
+        });
+        //退出的
+        mExitBgAnim = ValueAnimator.ofFloat(0.7f,1.0f);
+        mExitBgAnim.setDuration(200);
+        //设置监听器
+        mExitBgAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                updateBgAlpha(value);
+            }
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -194,10 +223,27 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
             //Toast.makeText(v.getContext(),"CLICK SHOW OR HIDE TRACK LIST...",Toast.LENGTH_SHORT).show();
             //TODO：显示播放列表   HiPopWindow
                 mHiPopWindow.showAtLocation(v, Gravity.BOTTOM,0,0);
+                //处理一下背景
 
+                mEnterBgAnim.start();
             }
         });
 
+        mHiPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                //POP窗体消失后，恢复透明度
+//                updateBgAlpha(1.0f);
+                mExitBgAnim.start();
+            }
+        });
+    }
+
+    private void updateBgAlpha(float alpha) {
+        Window window = getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.alpha = alpha;
+        window.setAttributes(attributes);
     }
 
     /**
@@ -232,6 +278,11 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         }
     }
 
+    @Override
+    public void onPlayStart() {
+
+    }
+
     private void initView() {
         mPlayOrPauseBt = this.findViewById(R.id.play_or_pause_bt);
         mDurationTx = this.findViewById(R.id.track_duration);
@@ -254,13 +305,7 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         mPlayModeBt = this.findViewById(R.id.switch_play_mode_bt);
         //显示或者隐藏播放歌单列表
         mPlayListShowOrHide = this.findViewById(R.id.play_list_show_or_hide_bt);
-
         mHiPopWindow = new HiPopWindow();
-
-    }
-
-    @Override
-    public void onPlayStart() {
 
     }
 
@@ -295,6 +340,10 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         if (mTrackCoverAdapter != null) {
             mTrackCoverAdapter.setData(trackList);
         }
+        if (mHiPopWindow != null) {
+            mHiPopWindow.setListData(trackList);
+        }
+
 //        LogUtils.d(TAG,"trackList ---- > " + trackList);
     }
 
@@ -330,7 +379,7 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
 //        计算当前的进度
         if (!isUserTouch) {
             mSeekBar.setProgress(mCurProgress);
-            LogUtils.d(TAG,"User Touch to change current Progress --- > " + mCurProgress);
+//            LogUtils.d(TAG,"User Touch to change current Progress --- > " + mCurProgress);
         }
 
 
@@ -357,6 +406,10 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         //TODO：
         if (mTrackCoverVp != null) {
                 mTrackCoverVp.setCurrentItem(index,true);
+        }
+        //设置播放列表里相对应的当前播放位置
+        if (mHiPopWindow != null) {
+            mHiPopWindow.setCurPlayPos(index);
         }
     }
 

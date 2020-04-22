@@ -1,13 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_playback_player_list">
 
-    <RelativeLayout
+
+    <LinearLayout
+        android:id="@+id/play_list_controller_container"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:background="@color/himalaya_color">
-    </RelativeLayout>
+        android:layout_height="50dp"
+        android:orientation="horizontal">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/play_mode_tv_show"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="顺序播放"
+            android:textColor="@android:color/black"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:paddingTop="3dp"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/playback_list_rv"
+        android:layout_below="@id/play_list_controller_container"
+        android:layout_height="400dp"/>
+
+    <TextView
+        android:id="@+id/play_list_close_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/playback_list_rv"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:text="关闭"/>
+
+</RelativeLayout>

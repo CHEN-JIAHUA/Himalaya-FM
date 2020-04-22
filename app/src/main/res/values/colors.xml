@@ -5,4 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="himalaya_color">#FA7254</color>
     <color name="recommend_intro_color">#848484</color>
+
+    <color name="play_list_text_color">#7D828C</color>
+    <color name="play_list_line_color">#ECEEF0</color>
 </resources>
