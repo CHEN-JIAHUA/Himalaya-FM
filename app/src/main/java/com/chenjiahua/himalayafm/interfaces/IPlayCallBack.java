@@ -65,4 +65,10 @@ public interface IPlayCallBack {
      */
     void onUpdateTrack(Track track ,int index);
 
+    /**
+     * 通知UI更新
+     * @param isOrder
+     */
+    void updatePlayListOrder(boolean isOrder);
+
 }

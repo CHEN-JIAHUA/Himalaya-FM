@@ -21,6 +21,7 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
@@ -35,8 +36,9 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     private final XmPlayerManager mXmPlayerManager;
     private String mTrackTitle;
     private Track mTrack;
-    private int playIndex = 0;
+    private int mPlayIndex = 0;
     private final SharedPreferences mPlayModeSp;
+    private boolean msReverse = false;
 
     public static final int PLAY_MODEL_LIST_INT = 0;
     public static final int PLAY_MODEL_SINGLE_LOOP_INT = 1;
@@ -79,7 +81,7 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
         LogUtils.d(TAG,"setPlayList === " + mTrackTitle);
         if (mXmPlayerManager != null) {
             mXmPlayerManager.setPlayList(trackList,index);
-            this.playIndex = index;
+            this.mPlayIndex = index;
             LogUtils.d(TAG,"set playList Successful");
             isPlayListSet = true;
             mTrack = trackList.get(index);
@@ -200,8 +202,27 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
     }
 
     @Override
+    public void isInvertPlayList() {
+            //把播放列表反转
+        List<Track> playList = mXmPlayerManager.getPlayList();
+        Collections.reverse(playList);
+        //更新下标
+        mPlayIndex = playList.size() - 1 - mPlayIndex;
+        mXmPlayerManager.setPlayList(playList,mPlayIndex);
+        msReverse = !msReverse;
+        //更新UI
+        mTrack = (Track) mXmPlayerManager.getCurrSound();
+        for (IPlayCallBack playCallBack : mIPlayCallBacks) {
+            playCallBack.onPlayListLoaded(playList);
+            playCallBack.onUpdateTrack(mTrack,mPlayIndex);
+            playCallBack.updatePlayListOrder(msReverse);
+        }
+
+    }
+
+    @Override
     public void registerCallback(IPlayCallBack iPlayCallBack) {
-        iPlayCallBack.onUpdateTrack(mTrack, playIndex);
+        iPlayCallBack.onUpdateTrack(mTrack, mPlayIndex);
         int modeInt = mPlayModeSp.getInt(PLAY_MODEL_SP_KEY, PLAY_MODEL_LIST_INT);
         mCurPlayMode = getPlayModeByInt(modeInt);
         iPlayCallBack.onSwitchPlayMode(mCurPlayMode);
@@ -308,13 +329,13 @@ public class PlayerPresenterImpl implements IPlayPresenter, IXmAdsStatusListener
         }
         LogUtils.d(TAG,"onSoundSwitch..." + curModel.getKind());
 
-        this.playIndex = mXmPlayerManager.getCurrentIndex();
+        this.mPlayIndex = mXmPlayerManager.getCurrentIndex();
 
         if (curModel instanceof Track) {
             Track curTrack = (Track) curModel;
             mTrack = curTrack;
             for (IPlayCallBack playCallBack : mIPlayCallBacks) {
-                playCallBack.onUpdateTrack(curTrack, playIndex);
+                playCallBack.onUpdateTrack(curTrack, mPlayIndex);
             }
         }
 

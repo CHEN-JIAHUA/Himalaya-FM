@@ -59,5 +59,11 @@ public interface IPlayPresenter extends IBasePresenter<IPlayCallBack> {
      */
     boolean isPlay();
 
+    /**
+     * 播放列表是否反转顺序
+     */
+    void isInvertPlayList();
+
+
 
 }

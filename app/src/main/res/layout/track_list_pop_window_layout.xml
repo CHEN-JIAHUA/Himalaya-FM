@@ -4,32 +4,56 @@
     android:layout_height="match_parent"
     android:background="@drawable/shape_playback_player_list">
 
-
     <LinearLayout
         android:id="@+id/play_list_controller_container"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="5dp"
         android:layout_height="50dp"
         android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/play_mode_iv_show"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/selector_play_model_list" />
+
+            <TextView
+                android:id="@+id/play_mode_tv_show"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="顺序播放"
+                android:layout_marginStart="6dp"
+                android:textColor="@color/himalaya_color"
+                android:gravity="center_vertical"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/play_list_sequence_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal">
+
         <ImageView
-            android:id="@+id/play_mode_iv_show"
+            android:id="@+id/switch_sequence_iv"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:src="@mipmap/sort_descending_normal" />
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/selector_play_model_list" />
 
         <TextView
-            android:id="@+id/play_mode_tv_show"
+            android:id="@+id/switch_sequence_tv"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="顺序播放"
-            android:layout_marginStart="6dp"
-            android:textColor="@color/himalaya_color"
+            android:layout_marginEnd="30dp"
             android:gravity="center_vertical"
-            android:textSize="18sp" />
-    </LinearLayout>
+            android:text="降序"
+            android:textColor="@color/himalaya_color" />
 
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:id="@+id/playback_list_rv"

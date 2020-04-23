@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:orientation="horizontal"
-    android:background="@drawable/shape_album_item_bg"
-    android:layout_marginTop="3dp">
+    android:background="@drawable/shape_album_item_bg">
 
     <com.chenjiahua.himalayafm.view.RoundRectImageView
         android:id="@+id/recommend_url_icon_large"
@@ -29,7 +28,7 @@
             android:textSize="18sp"
             android:textColor="@android:color/black"
             android:gravity="start"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:text="拿破仑·希尔《成功学全书》"/>
 
         <TextView
@@ -37,7 +36,7 @@
             android:layout_width="262dp"
             android:layout_height="15dp"
             android:textSize="12sp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
             android:text="为你开启成功之路，给你指向未来！一起行动"
             android:textColor="@color/recommend_intro_color"/>
 
@@ -45,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="6dp"
             android:layout_marginStart="10dp">
 
             <ImageView

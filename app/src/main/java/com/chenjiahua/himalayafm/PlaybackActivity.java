@@ -78,6 +78,7 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
     private HiPopWindow mHiPopWindow;
     private ValueAnimator mEnterBgAnim;
     private ValueAnimator mExitBgAnim;
+    private boolean mIsOrder = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -121,16 +122,15 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         });
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void initEvent() {
         mPlayOrPauseBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mPlayerPresenter.isPlay()) {
-                    mPlayOrPauseBt.setImageResource(R.drawable.selector_play_stop);
+                    mPlayOrPauseBt.setImageResource(R.drawable.selector_player_play);
                     mPlayerPresenter.pause();
                 } else {
-                    mPlayOrPauseBt.setImageResource(R.drawable.selector_player_play);
+                    mPlayOrPauseBt.setImageResource(R.drawable.selector_player_stop);
                     mPlayerPresenter.play();
                 }
             }
@@ -238,14 +238,23 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
             }
         });
 
-        mHiPopWindow.setOnPlayModeClickListener(new HiPopWindow.PlayModeIconClickListener() {
+        mHiPopWindow.setOnPlayListClickListener(new HiPopWindow.PlayListIconClickListener() {
             @Override
             public void playModeClick() {
                 switchPlayMode();
 
             }
+
+            @Override
+            public void onOrderClick() {
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.isInvertPlayList();
+                    LogUtils.d(TAG,"onOrderClick  --  执行了反转 ");
+                }
+            }
         });
     }
+
 
     private void switchPlayMode() {
         XmPlayListControl.PlayMode playMode = sPlayModeMap.get(mCurrentMode);
@@ -435,6 +444,16 @@ public class PlaybackActivity extends BaseActivity implements IPlayCallBack, Vie
         if (mHiPopWindow != null) {
             mHiPopWindow.setCurPlayPos(index);
         }
+    }
+
+    /**
+     *
+     * @param isOrder
+     */
+    @Override
+    public void updatePlayListOrder(boolean isOrder) {
+            mHiPopWindow.switchPlayListSequenceMode(isOrder);
+
     }
 
     @Override

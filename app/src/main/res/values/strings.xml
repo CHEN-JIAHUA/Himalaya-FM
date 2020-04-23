@@ -4,6 +4,10 @@
     <string name="play_mode_random_text">随机播放</string>
     <string name="play_mode_list_loop_text">循环播放</string>
     <string name="play_mode_single_song_text">单曲循环</string>
+    <string name="string_descending_text">顺序</string>
+    <string name="string_ascending_text">逆序</string>
+    <string name="string_play_now">正在播放</string>
+    <string name="string_pause_now">暂停播放</string>
     <string-array name="main_content">
         <item>推荐</item>
         <item>订阅</item>
